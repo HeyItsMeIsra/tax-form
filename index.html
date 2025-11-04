@@ -1,222 +1,596 @@
-index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Tax Preparation Intake Form (HTML Only)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Tax preparation intake form (demo). Do not enter sensitive information. HTML-only, accessible and responsive." />
+  <title>Tax Preparation Intake Form (HTML Only)</title>
+  <style>
+    /* --- FIX: Prevent input “overlap” / spill --- */
+    *, *::before, *::after { box-sizing: border-box; }
+    .grid > * { min-width: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --fg: #1f2937; /* slate-800 */
+      --muted: #6b7280; /* gray-500 */
+      --line: #e5e7eb; /* gray-200 */
+      --accent: #2563eb; /* blue-600 */
+      --accent-fg: #ffffff;
+      --danger: #b91c1c; /* red-700 */
+      --ok: #047857; /* emerald-700 */
+      --radius: 12px;
+      --shadow: 0 4px 14px rgba(0,0,0,.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1220;
+        --fg: #e5e7eb;
+        --muted: #94a3b8;
+        --line: #1f2a44;
+        --accent: #60a5fa;
+        --accent-fg: #0b1220;
+        --shadow: 0 6px 20px rgba(0,0,0,.35);
+      }
+      ::placeholder { color: #7c8699; }
+    }
+
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      color: var(--fg);
+      background: var(--bg);
+      font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    .container { max-width: 980px; margin: 0 auto; padding: 24px; }
+    a { color: var(--accent); }
+
+    header.hero {
+      margin-bottom: 20px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      background: linear-gradient(180deg, rgba(37,99,235,0.06), transparent);
+    }
+    header.hero h1 { margin: 0 0 6px; font-size: clamp(1.4rem, 2.6vw, 2rem); }
+    header.hero p { margin: 6px 0 0; color: var(--muted); }
+
+    .skip-link {
+      position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+    }
+    .skip-link:focus { position: static; width: auto; height: auto; padding: 6px 10px; background: var(--accent); color: var(--accent-fg); border-radius: 6px; }
+
+    .sr-only {
+      position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    details { margin-top: 12px; }
+    details summary { cursor: pointer; user-select: none; font-weight: 600; }
+    details[open] summary { color: var(--accent); }
+
+    form { display: grid; gap: 28px; }
+
+    section.block {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      background: rgba(255,255,255,0.5);
+    }
+    @media (prefers-color-scheme: dark) {
+      section.block { background: rgba(17,24,39,0.4); }
+    }
+
+    section.block h2 { margin-top: 0; font-size: 1.15rem; }
+    section.block h3 { margin-bottom: 6px; }
+
+    .grid { display: grid; gap: 16px; }
+    @media (min-width: 720px) {
+      .grid.two { grid-template-columns: 1fr 1fr; }
+      .grid.three { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .field { display: grid; gap: 6px; }
+    label { font-weight: 600; }
+    .req { color: var(--danger); font-weight: 700; margin-left: 2px; }
+    small.hint { color: var(--muted); }
+
+    input[type="text"], input[type="email"], input[type="tel"],
+    input[type="date"], input[type="number"], select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: transparent;
+      color: var(--fg);
+      outline: none;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 24%, transparent); }
+
+    input[type="number"] { appearance: textfield; }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+    fieldset { border: 1px dashed var(--line); border-radius: 8px; padding: 10px 12px 12px; }
+    legend { padding: 0 6px; color: var(--muted); }
+
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    button {
+      appearance: none;
+      border: 0; border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700; cursor: pointer;
+      background: var(--accent); color: var(--accent-fg);
+      box-shadow: var(--shadow);
+    }
+    button[type="reset"] { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+    /* client-side validity hints (subtle) */
+    input:required:invalid, select:required:invalid, textarea:required:invalid { border-color: #f59e0b; }
+    input:required:valid, select:required:valid, textarea:required:valid { border-color: #10b981; }
+
+    footer { color: var(--muted); margin: 24px 0; text-align: center; }
+
+    /* Optional: print tidy */
+    @media print {
+      header.hero, .actions { display:none !important; }
+      body { background:#fff; }
+      section.block { box-shadow:none; border-color:#ccc; }
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <h1>Tax Preparation Intake Form</h1>
-  <p>Complete this intake to help us prepare your tax return. Fields marked with * are required.</p>
+<a class="skip-link" href="#intake">Skip to form</a>
+<div class="container">
+  <header class="hero" role="banner">
+    <h1 id="page-title">Tax Preparation Intake Form</h1>
+    <p>Complete this intake to help us prepare your tax return. Fields marked with <span class="req" aria-hidden="true">*</span> are required.</p>
+    <details>
+      <summary>Privacy &amp; Security Notice</summary>
+      <p>Do not submit sensitive information (e.g., full SSNs or IP PINs) over unsecured connections. Use encrypted channels only. This sample is for educational/demo purposes.</p>
+    </details>
+  </header>
 
-  <details>
-    <summary>Privacy & Security Notice</summary>
-    <p>Do not submit sensitive information (e.g., full SSNs) over unsecured connections. Use encrypted channels only. This sample is for educational/demo purposes.</p>
-  </details>
-</header>
+  <main role="main" aria-labelledby="page-title">
+    <form id="intake" action="#" method="post" autocomplete="on">
+      <!-- ========= 1) PRIMARY TAXPAYER ========= -->
+      <section class="block" aria-labelledby="tp-heading">
+        <h2 id="tp-heading">Primary Taxpayer</h2>
 
-<main>
-  <form id="intake" action="#" method="post">
-    <!-- ========= 1) PRIMARY TAXPAYER ========= -->
-    <section aria-labelledby="tp-heading">
-      <h2 id="tp-heading">Primary Taxpayer</h2>
+        <div class="grid two">
+          <div class="field">
+            <label for="tp-first">First name <span class="req" aria-hidden="true">*</span></label>
+            <input id="tp-first" name="tp_first" type="text" autocomplete="given-name" autocapitalize="words" required />
+          </div>
+          <div class="field">
+            <label for="tp-last">Last name <span class="req" aria-hidden="true">*</span></label>
+            <input id="tp-last" name="tp_last" type="text" autocomplete="family-name" autocapitalize="words" required />
+          </div>
+        </div>
 
-      <label for="tp-first">First name *</label><br>
-      <input id="tp-first" name="tp_first" type="text" autocomplete="given-name" required><br><br>
+        <div class="grid two">
+          <div class="field">
+            <label for="tp-email">Email <span class="req" aria-hidden="true">*</span></label>
+            <input id="tp-email" name="tp_email" type="email" autocomplete="email" inputmode="email" spellcheck="false" required />
+          </div>
+          <div class="field">
+            <label for="tp-phone">Phone</label>
+            <input id="tp-phone" name="tp_phone" type="tel" autocomplete="tel" placeholder="+1 555 123 4567"
+                   pattern="[0-9+\-\s()]{7,}" title="Use digits, spaces, parentheses, or dashes (min 7 chars)" />
+          </div>
+        </div>
 
-      <label for="tp-last">Last name *</label><br>
-      <input id="tp-last" name="tp_last" type="text" autocomplete="family-name" required><br><br>
+        <div class="grid two">
+          <div class="field">
+            <label for="tp-dob">Date of birth <span class="req" aria-hidden="true">*</span></label>
+            <input id="tp-dob" name="tp_dob" type="date" min="1900-01-01" max="2025-11-03" required />
+          </div>
+          <div class="field">
+            <label for="tp-tin">Tax ID (last 4 only) <span class="req" aria-hidden="true">*</span></label>
+            <input id="tp-tin" name="tp_tin_last4" type="text" inputmode="numeric" pattern="\d{4}" maxlength="4" placeholder="1234" required aria-describedby="tin-hint" title="Enter exactly 4 digits" />
+            <small id="tin-hint" class="hint">Enter last 4 digits only (####).</small>
+          </div>
+        </div>
 
-      <label for="tp-email">Email *</label><br>
-      <input id="tp-email" name="tp_email" type="email" autocomplete="email" required><br><br>
+        <div class="grid two">
+          <div class="field">
+            <label for="tax-year">Tax year <span class="req" aria-hidden="true">*</span></label>
+            <input id="tax-year" name="tax_year" type="number" min="2000" max="2100" placeholder="2024" required />
+          </div>
+          <div class="field">
+            <label for="extension">Filing extension filed?</label>
+            <select id="extension" name="extension">
+              <option value="">-- Select --</option>
+              <option value="no">No</option>
+              <option value="yes">Yes (Form 4868)</option>
+            </select>
+          </div>
+        </div>
 
-      <label for="tp-phone">Phone</label><br>
-      <input id="tp-phone" name="tp_phone" type="tel" autocomplete="tel" placeholder="+1 555 123 4567"><br><br>
+        <h3>Mailing Address</h3>
+        <div class="grid">
+          <div class="field">
+            <label for="addr1">Address line 1 <span class="req" aria-hidden="true">*</span></label>
+            <input id="addr1" name="addr1" type="text" autocomplete="address-line1" required />
+          </div>
+          <div class="field">
+            <label for="addr2">Address line 2</label>
+            <input id="addr2" name="addr2" type="text" autocomplete="address-line2" placeholder="Apt, suite, unit" />
+          </div>
+          <div class="grid two">
+            <div class="field">
+              <label for="city">City <span class="req" aria-hidden="true">*</span></label>
+              <input id="city" name="city" type="text" autocomplete="address-level2" required />
+            </div>
+            <div class="field">
+              <label for="state">State/Province <span class="req" aria-hidden="true">*</span></label>
+              <select id="state" name="state" autocomplete="address-level1" required>
+                <option value="">-- Select --</option>
+                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
+                <option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option>
+                <option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+                <option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+                <option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option>
+                <option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
+                <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+                <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+                <option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option>
+                <option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+                <option>DC</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="zip">ZIP/Postal code <span class="req" aria-hidden="true">*</span></label>
+            <input id="zip" name="zip" type="text" inputmode="numeric" pattern="\d{5}(-\d{4})?" placeholder="12345 or 12345-6789" autocomplete="postal-code" required title="Use 5 digits or ZIP+4 (e.g., 12345 or 12345-6789)" />
+          </div>
+        </div>
+      </section>
 
-      <label for="tp-dob">Date of birth *</label><br>
-      <input id="tp-dob" name="tp_dob" type="date" required><br><br>
+      <!-- ========= 2) SPOUSE (OPTIONAL) ========= -->
+      <section class="block" aria-labelledby="spouse-heading">
+        <h2 id="spouse-heading">Spouse (if applicable)</h2>
+        <div class="grid two">
+          <div class="field">
+            <label for="sp-first">First name</label>
+            <input id="sp-first" name="sp_first" type="text" autocomplete="given-name" autocapitalize="words" />
+          </div>
+          <div class="field">
+            <label for="sp-last">Last name</label>
+            <input id="sp-last" name="sp_last" type="text" autocomplete="family-name" autocapitalize="words" />
+          </div>
+        </div>
+        <div class="grid two">
+          <div class="field">
+            <label for="sp-dob">Date of birth</label>
+            <input id="sp-dob" name="sp_dob" type="date" min="1900-01-01" max="2025-11-03" />
+          </div>
+          <div class="field">
+            <label for="sp-tin">Tax ID (last 4)</label>
+            <input id="sp-tin" name="sp_tin_last4" type="text" inputmode="numeric" pattern="\d{4}" maxlength="4" placeholder="1234" title="Enter exactly 4 digits" />
+          </div>
+        </div>
+      </section>
 
-      <label for="tp-tin">Tax ID (last 4 only) *</label><br>
-      <input id="tp-tin" name="tp_tin_last4" type="text" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="1234" required>
-      <p id="tin-hint">Enter last 4 digits only (####).</p><br>
+      <!-- ========= 3) FILING STATUS ========= -->
+      <section class="block" aria-labelledby="status-heading">
+        <h2 id="status-heading">Filing Status <span class="req" aria-hidden="true">*</span></h2>
+        <fieldset>
+          <legend>Select one</legend>
+          <ul style="list-style:none; padding-left:0; margin:0;">
+            <li><label><input type="radio" name="filing_status" value="single" required> Single</label></li>
+            <li><label><input type="radio" name="filing_status" value="mfj"> Married filing jointly</label></li>
+            <li><label><input type="radio" name="filing_status" value="mfs"> Married filing separately</label></li>
+            <li><label><input type="radio" name="filing_status" value="hoh"> Head of household</label></li>
+            <li><label><input type="radio" name="filing_status" value="qss"> Qualifying surviving spouse</label></li>
+          </ul>
+        </fieldset>
+      </section>
 
-      <label for="tax-year">Tax year *</label><br>
-      <input id="tax-year" name="tax_year" type="number" min="2000" max="2100" value="2024" required><br><br>
+      <!-- ========= 4) DEPENDENTS (SUMMARY) ========= -->
+      <section class="block" aria-labelledby="deps-heading">
+        <h2 id="deps-heading">Dependents</h2>
+        <div class="grid two">
+          <div class="field">
+            <label for="dep-count">Number of dependents</label>
+            <input id="dep-count" name="dep_count" type="number" min="0" step="1" inputmode="numeric" />
+          </div>
+          <div class="field">
+            <label for="dep-children">Number of qualifying children (for credits)</label>
+            <input id="dep-children" name="dep_children" type="number" min="0" step="1" inputmode="numeric" />
+            <small id="dep-hint" class="hint">If you have dependents, we’ll collect their details securely later.</small>
+          </div>
+        </div>
+      </section>
 
-      <h3>Mailing Address</h3>
+      <!-- ========= 5) INCOME (EXPANDED) ========= -->
+      <section class="block" aria-labelledby="income-heading">
+        <h2 id="income-heading">Income</h2>
 
-      <label for="addr1">Address line 1 *</label><br>
-      <input id="addr1" name="addr1" type="text" autocomplete="address-line1" required><br><br>
+        <div class="grid two">
+          <div class="field">
+            <label for="wages">Wages (W-2) <span class="req" aria-hidden="true">*</span></label>
+            <input id="wages" name="wages" type="number" inputmode="decimal" min="0" step="0.01" required />
+          </div>
+          <div class="field">
+            <label for="int">Taxable interest (1099-INT)</label>
+            <input id="int" name="interest" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+        </div>
 
-      <label for="addr2">Address line 2</label><br>
-      <input id="addr2" name="addr2" type="text" autocomplete="address-line2" placeholder="Apt, suite, unit"><br><br>
+        <div class="grid two">
+          <div class="field">
+            <label for="div">Ordinary dividends (1099-DIV)</label>
+            <input id="div" name="dividends" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="cap">Capital gains / losses (1099-B, Schedule D)</label>
+            <input id="cap" name="capital_gains" type="number" inputmode="decimal" min="-999999999" step="0.01" />
+          </div>
+        </div>
 
-      <label for="city">City *</label><br>
-      <input id="city" name="city" type="text" autocomplete="address-level2" required><br><br>
+        <div class="grid two">
+          <div class="field">
+            <label for="bus">Business income (Schedule C)</label>
+            <input id="bus" name="business_income" type="number" inputmode="decimal" min="-999999999" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="rent">Rental/royalty/net (Schedule E)</label>
+            <input id="rent" name="rental_income" type="number" inputmode="decimal" min="-999999999" step="0.01" />
+          </div>
+        </div>
 
-      <label for="state">State/Province *</label><br>
-      <select id="state" name="state" autocomplete="address-level1" required>
-        <option value="">-- Select --</option>
-        <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
-        <option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option>
-        <option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option>
-        <option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option>
-        <option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option>
-        <option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
-        <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
-        <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option>
-        <option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option>
-        <option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
-        <option>DC</option>
-      </select><br><br>
+        <div class="grid two">
+          <div class="field">
+            <label for="k1">K-1 income/loss (Partnership/S-Corp/Trust)</label>
+            <input id="k1" name="k1_income" type="number" inputmode="decimal" min="-999999999" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="unemp">Unemployment compensation (1099-G)</label>
+            <input id="unemp" name="unemployment" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+        </div>
 
-      <label for="zip">ZIP/Postal code *</label><br>
-      <input id="zip" name="zip" type="text" inputmode="numeric" pattern="\\d{5}(-\\d{4})?" placeholder="12345 or 12345-6789" autocomplete="postal-code" required>
-    </section>
+        <div class="grid two">
+          <div class="field">
+            <label for="ss">Social Security benefits (SSA-1099, taxable amount)</label>
+            <input id="ss" name="social_security_taxable" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="ira-dist">IRA/pension distributions (1099-R, taxable amount)</label>
+            <input id="ira-dist" name="ira_taxable" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+        </div>
 
-    <!-- ========= 2) SPOUSE (OPTIONAL) ========= -->
-    <section aria-labelledby="spouse-heading">
-      <h2 id="spouse-heading">Spouse (if applicable)</h2>
+        <div class="grid two">
+          <div class="field">
+            <label for="alimony">Alimony received (agreements before 2019)</label>
+            <input id="alimony" name="alimony_received" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="other-inc">Other income (gig/crypto/foreign/etc.)</label>
+            <input id="other-inc" name="other_income" type="number" inputmode="decimal" min="-999999999" step="0.01" />
+          </div>
+        </div>
 
-      <label for="sp-first">First name</label><br>
-      <input id="sp-first" name="sp_first" type="text" autocomplete="given-name"><br><br>
+        <fieldset>
+          <legend>Related documents you have</legend>
+          <ul style="list-style:none; padding-left:0; margin:0;">
+            <li><label><input type="checkbox" name="docs_w2" value="yes"> W-2</label></li>
+            <li><label><input type="checkbox" name="docs_1099int" value="yes"> 1099-INT</label></li>
+            <li><label><input type="checkbox" name="docs_1099div" value="yes"> 1099-DIV</label></li>
+            <li><label><input type="checkbox" name="docs_1099b" value="yes"> 1099-B (brokerage/RSUs/stock sales)</label></li>
+            <li><label><input type="checkbox" name="docs_1099nec" value="yes"> 1099-NEC / 1099-MISC</label></li>
+            <li><label><input type="checkbox" name="docs_1099g" value="yes"> 1099-G (unemployment/state refunds)</label></li>
+            <li><label><input type="checkbox" name="docs_1099r" value="yes"> 1099-R (retirement distributions)</label></li>
+            <li><label><input type="checkbox" name="docs_k1" value="yes"> Schedule K-1</label></li>
+            <li><label><input type="checkbox" name="docs_ssa" value="yes"> SSA-1099</label></li>
+          </ul>
+        </fieldset>
+      </section>
 
-      <label for="sp-last">Last name</label><br>
-      <input id="sp-last" name="sp_last" type="text" autocomplete="family-name"><br><br>
+      <!-- ========= 6) ADJUSTMENTS & DEDUCTIONS ========= -->
+      <section class="block" aria-labelledby="ded-heading">
+        <h2 id="ded-heading">Adjustments &amp; Deductions</h2>
+        <fieldset>
+          <legend>Deduction type <span class="req" aria-hidden="true">*</span></legend>
+          <ul style="list-style:none; padding-left:0; margin:0;">
+            <li><label><input type="radio" name="deduction_type" value="standard" required checked> Standard deduction</label></li>
+            <li><label><input type="radio" name="deduction_type" value="itemized"> Itemized deduction (enter total)</label></li>
+          </ul>
+        </fieldset>
 
-      <label for="sp-dob">Date of birth</label><br>
-      <input id="sp-dob" name="sp_dob" type="date"><br><br>
+        <div class="grid two" style="margin-top:12px;">
+          <div class="field">
+            <label for="itemized">Itemized deduction total</label>
+            <input id="itemized" name="itemized_total" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="adj">Other adjustments (HSA, SEP/SIMPLE, etc.)</label>
+            <input id="adj" name="adjustments" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+        </div>
 
-      <label for="sp-tin">Tax ID (last 4)</label><br>
-      <input id="sp-tin" name="sp_tin_last4" type="text" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="1234">
-    </section>
+        <div class="grid two">
+          <div class="field">
+            <label for="educator">Educator expenses</label>
+            <input id="educator" name="educator_expenses" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="student-loan">Student loan interest (1098-E)</label>
+            <input id="student-loan" name="student_loan_interest" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+        </div>
 
-    <!-- ========= 3) FILING STATUS ========= -->
-    <section aria-labelledby="status-heading">
-      <h2 id="status-heading">Filing Status *</h2>
-      <fieldset>
-        <legend>Select one</legend>
-        <label><input type="radio" name="filing_status" value="single" required> Single</label><br>
-        <label><input type="radio" name="filing_status" value="mfj"> Married filing jointly</label><br>
-        <label><input type="radio" name="filing_status" value="mfs"> Married filing separately</label><br>
-        <label><input type="radio" name="filing_status" value="hoh"> Head of household</label><br>
-        <label><input type="radio" name="filing_status" value="qss"> Qualifying surviving spouse</label>
-      </fieldset>
-    </section>
+        <div class="grid two">
+          <div class="field">
+            <label for="trad-ira">Traditional IRA contribution</label>
+            <input id="trad-ira" name="trad_ira_contrib" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="hsa-contrib">HSA contribution</label>
+            <input id="hsa-contrib" name="hsa_contrib" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+        </div>
+      </section>
 
-    <!-- ========= 4) DEPENDENTS (SUMMARY) ========= -->
-    <section aria-labelledby="deps-heading">
-      <h2 id="deps-heading">Dependents</h2>
-      <label for="dep-count">Number of dependents</label><br>
-      <input id="dep-count" name="dep_count" type="number" min="0" step="1" value="0"><br><br>
+      <!-- ========= 7) CREDITS ========= -->
+      <section class="block" aria-labelledby="credits-heading">
+        <h2 id="credits-heading">Credits (potential eligibility)</h2>
+        <div class="grid two">
+          <div class="field">
+            <label for="childcare-exp">Child/dependent care expenses (for credit)</label>
+            <input id="childcare-exp" name="childcare_expenses" type="number" inputmode="decimal" min="0" step="0.01" />
+            <small class="hint">Include daycare, after-school programs.</small>
+          </div>
+          <div class="field">
+            <label for="edu-exp">Qualified education expenses (AOTC/LLC)</label>
+            <input id="edu-exp" name="education_expenses" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+        </div>
+        <div class="grid two">
+          <div class="field">
+            <label for="energy-home">Home energy improvements (Form 5695)</label>
+            <input id="energy-home" name="energy_home" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="ev-credit">Clean vehicle credit purchase price</label>
+            <input id="ev-credit" name="ev_price" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+        </div>
+      </section>
 
-      <label for="dep-children">Number of qualifying children (for credits)</label><br>
-      <input id="dep-children" name="dep_children" type="number" min="0" step="1" value="0">
-      <p id="dep-hint">If you have dependents, we’ll collect their details securely later.</p>
-    </section>
+      <!-- ========= 8) HEALTH COVERAGE ========= -->
+      <section class="block" aria-labelledby="health-heading">
+        <h2 id="health-heading">Health Coverage</h2>
+        <fieldset>
+          <legend>Type</legend>
+          <ul style="list-style:none; padding-left:0; margin:0;">
+            <li><label><input type="radio" name="coverage_type" value="employer"> Employer/other</label></li>
+            <li><label><input type="radio" name="coverage_type" value="marketplace"> Marketplace (1095-A)</label></li>
+            <li><label><input type="radio" name="coverage_type" value="none"> No coverage for part/all of year</label></li>
+          </ul>
+        </fieldset>
+        <div class="grid two" style="margin-top:12px;">
+          <div class="field">
+            <label for="months-covered">Months covered (0–12)</label>
+            <input id="months-covered" name="months_covered" type="number" min="0" max="12" step="1" inputmode="numeric" />
+          </div>
+          <div class="field">
+            <label for="marketplace-advance">Advance premium tax credit received?</label>
+            <select id="marketplace-advance" name="aptc_received">
+              <option value="">-- Select --</option>
+              <option value="no">No</option>
+              <option value="yes">Yes (reconcile Form 8962)</option>
+            </select>
+          </div>
+        </div>
+      </section>
 
-    <!-- ========= 5) INCOME ========= -->
-    <section aria-labelledby="income-heading">
-      <h2 id="income-heading">Income</h2>
+      <!-- ========= 9) WITHHOLDING & PAYMENTS ========= -->
+      <section class="block" aria-labelledby="wh-heading">
+        <h2 id="wh-heading">Withholding &amp; Estimated Payments</h2>
+        <div class="grid two">
+          <div class="field">
+            <label for="fed-wh">Federal tax withheld (W-2/1099)</label>
+            <input id="fed-wh" name="federal_withheld" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="est">Estimated tax payments (quarterly)</label>
+            <input id="est" name="estimated_payments" type="number" inputmode="decimal" min="0" step="0.01" />
+          </div>
+        </div>
+      </section>
 
-      <label for="wages">Wages (W-2) *</label><br>
-      <input id="wages" name="wages" type="number" inputmode="decimal" min="0" step="0.01" value="0" required><br><br>
+      <!-- ========= 10) STATE RETURNS ========= -->
+      <section class="block" aria-labelledby="state-heading">
+        <h2 id="state-heading">State &amp; Local</h2>
+        <div class="grid two">
+          <div class="field">
+            <label for="resident-state">Resident state</label>
+            <input id="resident-state" name="resident_state" type="text" placeholder="e.g., NY" />
+          </div>
+          <div class="field">
+            <label for="nonresident-states">Nonresident/part-year states (comma-separated)</label>
+            <input id="nonresident-states" name="nonresident_states" type="text" placeholder="e.g., CA, NJ" />
+          </div>
+        </div>
+      </section>
 
-      <label for="int">Taxable interest (1099-INT)</label><br>
-      <input id="int" name="interest" type="number" inputmode="decimal" min="0" step="0.01" value="0"><br><br>
+      <!-- ========= 11) DIRECT DEPOSIT (OPTIONAL) ========= -->
+      <section class="block" aria-labelledby="dd-heading">
+        <h2 id="dd-heading">Refund Direct Deposit (optional)</h2>
+        <p class="hint">Provide only over a secure connection. Demo form—do not enter real banking details here.</p>
+        <div class="grid two">
+          <div class="field">
+            <label for="routing">Routing number (9 digits)</label>
+            <input id="routing" name="routing_number" type="text" inputmode="numeric" pattern="\d{9}" maxlength="9" title="Enter 9 digits" />
+          </div>
+          <div class="field">
+            <label for="account">Account number</label>
+            <input id="account" name="account_number" type="text" inputmode="numeric" pattern="\d{4,17}" maxlength="17" title="Enter 4–17 digits" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="account-type">Account type</label>
+          <select id="account-type" name="account_type">
+            <option value="">-- Select --</option>
+            <option>Checking</option>
+            <option>Savings</option>
+          </select>
+        </div>
+      </section>
 
-      <label for="div">Ordinary dividends (1099-DIV)</label><br>
-      <input id="div" name="dividends" type="number" inputmode="decimal" min="0" step="0.01" value="0"><br><br>
+      <!-- ========= 12) NOTES ========= -->
+      <section class="block" aria-labelledby="notes-heading">
+        <h2 id="notes-heading">Notes / Special Circumstances</h2>
+        <div class="field">
+          <label for="notes" class="sr-only">Notes</label>
+          <textarea id="notes" name="notes" rows="5" placeholder="Life changes, new jobs, moves, crypto, RSUs, foreign accounts, etc."></textarea>
+        </div>
+      </section>
 
-      <label for="bus">Business income (Schedule C)</label><br>
-      <input id="bus" name="business_income" type="number" inputmode="decimal" min="0" step="0.01" value="0"><br><br>
+      <!-- ========= 13) DECLARATIONS ========= -->
+      <section class="block" aria-labelledby="decl-heading">
+        <h2 id="decl-heading">Declarations <span class="req" aria-hidden="true">*</span></h2>
+        <label>
+          <input type="checkbox" name="consent" value="yes" required>
+          I confirm the information provided is true and complete to the best of my knowledge.
+        </label>
+        <div class="grid two" style="margin-top:12px;">
+          <div class="field">
+            <label for="signature">Electronic signature (type full name) <span class="req" aria-hidden="true">*</span></label>
+            <input id="signature" name="signature" type="text" required />
+          </div>
+          <div class="field">
+            <label for="sig-date">Signature date <span class="req" aria-hidden="true">*</span></label>
+            <input id="sig-date" name="signature_date" type="date" required max="2025-11-03" />
+          </div>
+        </div>
+      </section>
 
-      <label for="cap">Capital gains (Schedule D)</label><br>
-      <input id="cap" name="capital_gains" type="number" inputmode="decimal" min="-999999999" step="0.01" value="0"><br><br>
+      <!-- ========= SUBMIT ========= -->
+      <div class="actions">
+        <button type="submit">Submit Intake</button>
+        <button type="reset">Clear Form</button>
+      </div>
 
-      <label for="oth-inc">Other income (rental, gig, etc.)</label><br>
-      <input id="oth-inc" name="other_income" type="number" inputmode="decimal" min="-999999999" step="0.01" value="0">
-    </section>
+      <!-- Basic spam honeypot (ignored by humans) -->
+      <input type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true" hidden>
+    </form>
+  </main>
 
-    <!-- ========= 6) DEDUCTIONS & ADJUSTMENTS ========= -->
-    <section aria-labelledby="ded-heading">
-      <h2 id="ded-heading">Deductions & Adjustments</h2>
-
-      <fieldset>
-        <legend>Deduction type *</legend>
-        <label><input type="radio" name="deduction_type" value="standard" required checked> Standard deduction</label><br>
-        <label><input type="radio" name="deduction_type" value="itemized"> Itemized deduction (enter total)</label>
-      </fieldset><br>
-
-      <label for="itemized">Itemized deduction total</label><br>
-      <input id="itemized" name="itemized_total" type="number" inputmode="decimal" min="0" step="0.01" value="0"><br><br>
-
-      <label for="adj">Adjustments (e.g., student loan interest, HSA)</label><br>
-      <input id="adj" name="adjustments" type="number" inputmode="decimal" min="0" step="0.01" value="0">
-    </section>
-
-    <!-- ========= 7) WITHHOLDING & PAYMENTS ========= -->
-    <section aria-labelledby="wh-heading">
-      <h2 id="wh-heading">Withholding & Estimated Payments</h2>
-
-      <label for="fed-wh">Federal tax withheld (W-2/1099)</label><br>
-      <input id="fed-wh" name="federal_withheld" type="number" inputmode="decimal" min="0" step="0.01" value="0"><br><br>
-
-      <label for="est">Estimated tax payments</label><br>
-      <input id="est" name="estimated_payments" type="number" inputmode="decimal" min="0" step="0.01" value="0">
-    </section>
-
-    <!-- ========= 8) DOCUMENT CHECKLIST ========= -->
-    <section aria-labelledby="docs-heading">
-      <h2 id="docs-heading">Documents You Have</h2>
-      <p>Select all that apply:</p>
-      <label><input type="checkbox" name="docs_w2" value="yes"> W-2</label><br>
-      <label><input type="checkbox" name="docs_1099int" value="yes"> 1099-INT</label><br>
-      <label><input type="checkbox" name="docs_1099div" value="yes"> 1099-DIV</label><br>
-      <label><input type="checkbox" name="docs_1099nec" value="yes"> 1099-NEC / 1099-MISC</label><br>
-      <label><input type="checkbox" name="docs_1098t" value="yes"> 1098-T (tuition)</label><br>
-      <label><input type="checkbox" name="docs_1098e" value="yes"> 1098-E (student loan interest)</label><br>
-      <label><input type="checkbox" name="docs_1098" value="yes"> 1098 (mortgage interest)</label>
-    </section>
-
-    <!-- ========= 9) NOTES ========= -->
-    <section aria-labelledby="notes-heading">
-      <h2 id="notes-heading">Notes / Special Circumstances</h2>
-      <textarea id="notes" name="notes" rows="5" placeholder="Tell us about life changes, new jobs, moves, crypto, RSUs, etc."></textarea>
-    </section>
-
-    <!-- ========= 10) DECLARATIONS ========= -->
-    <section aria-labelledby="decl-heading">
-      <h2 id="decl-heading">Declarations *</h2>
-      <label>
-        <input type="checkbox" name="consent" value="yes" required>
-        I confirm the information provided is true and complete to the best of my knowledge.
-      </label><br><br>
-
-      <label for="signature">Electronic signature (type full name) *</label><br>
-      <input id="signature" name="signature" type="text" required><br><br>
-
-      <label for="sig-date">Signature date *</label><br>
-      <input id="sig-date" name="signature_date" type="date" required>
-    </section>
-
-    <!-- ========= SUBMIT ========= -->
-    <p>
-      <button type="submit">Submit Intake</button>
-      <button type="reset">Clear Form</button>
-    </p>
-
-    <!-- Basic spam honeypot (ignored by humans) -->
-    <input type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true" hidden>
-  </form>
-</main>
-
-<footer>
-  <p>&copy; 2025 Tax Intake Demo. For educational use only.</p>
-</footer>
+  <footer role="contentinfo">
+    <p>&copy; 2025 Tax Intake Demo. For educational use only. <span class="hint">HTML-only, no JavaScript.</span></p>
+  </footer>
+</div>
 
 </body>
 </html>
