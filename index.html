@@ -1,0 +1,222 @@
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Tax Preparation Intake Form (HTML Only)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+<header>
+  <h1>Tax Preparation Intake Form</h1>
+  <p>Complete this intake to help us prepare your tax return. Fields marked with * are required.</p>
+
+  <details>
+    <summary>Privacy & Security Notice</summary>
+    <p>Do not submit sensitive information (e.g., full SSNs) over unsecured connections. Use encrypted channels only. This sample is for educational/demo purposes.</p>
+  </details>
+</header>
+
+<main>
+  <form id="intake" action="#" method="post">
+    <!-- ========= 1) PRIMARY TAXPAYER ========= -->
+    <section aria-labelledby="tp-heading">
+      <h2 id="tp-heading">Primary Taxpayer</h2>
+
+      <label for="tp-first">First name *</label><br>
+      <input id="tp-first" name="tp_first" type="text" autocomplete="given-name" required><br><br>
+
+      <label for="tp-last">Last name *</label><br>
+      <input id="tp-last" name="tp_last" type="text" autocomplete="family-name" required><br><br>
+
+      <label for="tp-email">Email *</label><br>
+      <input id="tp-email" name="tp_email" type="email" autocomplete="email" required><br><br>
+
+      <label for="tp-phone">Phone</label><br>
+      <input id="tp-phone" name="tp_phone" type="tel" autocomplete="tel" placeholder="+1 555 123 4567"><br><br>
+
+      <label for="tp-dob">Date of birth *</label><br>
+      <input id="tp-dob" name="tp_dob" type="date" required><br><br>
+
+      <label for="tp-tin">Tax ID (last 4 only) *</label><br>
+      <input id="tp-tin" name="tp_tin_last4" type="text" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="1234" required>
+      <p id="tin-hint">Enter last 4 digits only (####).</p><br>
+
+      <label for="tax-year">Tax year *</label><br>
+      <input id="tax-year" name="tax_year" type="number" min="2000" max="2100" value="2024" required><br><br>
+
+      <h3>Mailing Address</h3>
+
+      <label for="addr1">Address line 1 *</label><br>
+      <input id="addr1" name="addr1" type="text" autocomplete="address-line1" required><br><br>
+
+      <label for="addr2">Address line 2</label><br>
+      <input id="addr2" name="addr2" type="text" autocomplete="address-line2" placeholder="Apt, suite, unit"><br><br>
+
+      <label for="city">City *</label><br>
+      <input id="city" name="city" type="text" autocomplete="address-level2" required><br><br>
+
+      <label for="state">State/Province *</label><br>
+      <select id="state" name="state" autocomplete="address-level1" required>
+        <option value="">-- Select --</option>
+        <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
+        <option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option>
+        <option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+        <option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+        <option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option>
+        <option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
+        <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+        <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+        <option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option>
+        <option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+        <option>DC</option>
+      </select><br><br>
+
+      <label for="zip">ZIP/Postal code *</label><br>
+      <input id="zip" name="zip" type="text" inputmode="numeric" pattern="\\d{5}(-\\d{4})?" placeholder="12345 or 12345-6789" autocomplete="postal-code" required>
+    </section>
+
+    <!-- ========= 2) SPOUSE (OPTIONAL) ========= -->
+    <section aria-labelledby="spouse-heading">
+      <h2 id="spouse-heading">Spouse (if applicable)</h2>
+
+      <label for="sp-first">First name</label><br>
+      <input id="sp-first" name="sp_first" type="text" autocomplete="given-name"><br><br>
+
+      <label for="sp-last">Last name</label><br>
+      <input id="sp-last" name="sp_last" type="text" autocomplete="family-name"><br><br>
+
+      <label for="sp-dob">Date of birth</label><br>
+      <input id="sp-dob" name="sp_dob" type="date"><br><br>
+
+      <label for="sp-tin">Tax ID (last 4)</label><br>
+      <input id="sp-tin" name="sp_tin_last4" type="text" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="1234">
+    </section>
+
+    <!-- ========= 3) FILING STATUS ========= -->
+    <section aria-labelledby="status-heading">
+      <h2 id="status-heading">Filing Status *</h2>
+      <fieldset>
+        <legend>Select one</legend>
+        <label><input type="radio" name="filing_status" value="single" required> Single</label><br>
+        <label><input type="radio" name="filing_status" value="mfj"> Married filing jointly</label><br>
+        <label><input type="radio" name="filing_status" value="mfs"> Married filing separately</label><br>
+        <label><input type="radio" name="filing_status" value="hoh"> Head of household</label><br>
+        <label><input type="radio" name="filing_status" value="qss"> Qualifying surviving spouse</label>
+      </fieldset>
+    </section>
+
+    <!-- ========= 4) DEPENDENTS (SUMMARY) ========= -->
+    <section aria-labelledby="deps-heading">
+      <h2 id="deps-heading">Dependents</h2>
+      <label for="dep-count">Number of dependents</label><br>
+      <input id="dep-count" name="dep_count" type="number" min="0" step="1" value="0"><br><br>
+
+      <label for="dep-children">Number of qualifying children (for credits)</label><br>
+      <input id="dep-children" name="dep_children" type="number" min="0" step="1" value="0">
+      <p id="dep-hint">If you have dependents, we’ll collect their details securely later.</p>
+    </section>
+
+    <!-- ========= 5) INCOME ========= -->
+    <section aria-labelledby="income-heading">
+      <h2 id="income-heading">Income</h2>
+
+      <label for="wages">Wages (W-2) *</label><br>
+      <input id="wages" name="wages" type="number" inputmode="decimal" min="0" step="0.01" value="0" required><br><br>
+
+      <label for="int">Taxable interest (1099-INT)</label><br>
+      <input id="int" name="interest" type="number" inputmode="decimal" min="0" step="0.01" value="0"><br><br>
+
+      <label for="div">Ordinary dividends (1099-DIV)</label><br>
+      <input id="div" name="dividends" type="number" inputmode="decimal" min="0" step="0.01" value="0"><br><br>
+
+      <label for="bus">Business income (Schedule C)</label><br>
+      <input id="bus" name="business_income" type="number" inputmode="decimal" min="0" step="0.01" value="0"><br><br>
+
+      <label for="cap">Capital gains (Schedule D)</label><br>
+      <input id="cap" name="capital_gains" type="number" inputmode="decimal" min="-999999999" step="0.01" value="0"><br><br>
+
+      <label for="oth-inc">Other income (rental, gig, etc.)</label><br>
+      <input id="oth-inc" name="other_income" type="number" inputmode="decimal" min="-999999999" step="0.01" value="0">
+    </section>
+
+    <!-- ========= 6) DEDUCTIONS & ADJUSTMENTS ========= -->
+    <section aria-labelledby="ded-heading">
+      <h2 id="ded-heading">Deductions & Adjustments</h2>
+
+      <fieldset>
+        <legend>Deduction type *</legend>
+        <label><input type="radio" name="deduction_type" value="standard" required checked> Standard deduction</label><br>
+        <label><input type="radio" name="deduction_type" value="itemized"> Itemized deduction (enter total)</label>
+      </fieldset><br>
+
+      <label for="itemized">Itemized deduction total</label><br>
+      <input id="itemized" name="itemized_total" type="number" inputmode="decimal" min="0" step="0.01" value="0"><br><br>
+
+      <label for="adj">Adjustments (e.g., student loan interest, HSA)</label><br>
+      <input id="adj" name="adjustments" type="number" inputmode="decimal" min="0" step="0.01" value="0">
+    </section>
+
+    <!-- ========= 7) WITHHOLDING & PAYMENTS ========= -->
+    <section aria-labelledby="wh-heading">
+      <h2 id="wh-heading">Withholding & Estimated Payments</h2>
+
+      <label for="fed-wh">Federal tax withheld (W-2/1099)</label><br>
+      <input id="fed-wh" name="federal_withheld" type="number" inputmode="decimal" min="0" step="0.01" value="0"><br><br>
+
+      <label for="est">Estimated tax payments</label><br>
+      <input id="est" name="estimated_payments" type="number" inputmode="decimal" min="0" step="0.01" value="0">
+    </section>
+
+    <!-- ========= 8) DOCUMENT CHECKLIST ========= -->
+    <section aria-labelledby="docs-heading">
+      <h2 id="docs-heading">Documents You Have</h2>
+      <p>Select all that apply:</p>
+      <label><input type="checkbox" name="docs_w2" value="yes"> W-2</label><br>
+      <label><input type="checkbox" name="docs_1099int" value="yes"> 1099-INT</label><br>
+      <label><input type="checkbox" name="docs_1099div" value="yes"> 1099-DIV</label><br>
+      <label><input type="checkbox" name="docs_1099nec" value="yes"> 1099-NEC / 1099-MISC</label><br>
+      <label><input type="checkbox" name="docs_1098t" value="yes"> 1098-T (tuition)</label><br>
+      <label><input type="checkbox" name="docs_1098e" value="yes"> 1098-E (student loan interest)</label><br>
+      <label><input type="checkbox" name="docs_1098" value="yes"> 1098 (mortgage interest)</label>
+    </section>
+
+    <!-- ========= 9) NOTES ========= -->
+    <section aria-labelledby="notes-heading">
+      <h2 id="notes-heading">Notes / Special Circumstances</h2>
+      <textarea id="notes" name="notes" rows="5" placeholder="Tell us about life changes, new jobs, moves, crypto, RSUs, etc."></textarea>
+    </section>
+
+    <!-- ========= 10) DECLARATIONS ========= -->
+    <section aria-labelledby="decl-heading">
+      <h2 id="decl-heading">Declarations *</h2>
+      <label>
+        <input type="checkbox" name="consent" value="yes" required>
+        I confirm the information provided is true and complete to the best of my knowledge.
+      </label><br><br>
+
+      <label for="signature">Electronic signature (type full name) *</label><br>
+      <input id="signature" name="signature" type="text" required><br><br>
+
+      <label for="sig-date">Signature date *</label><br>
+      <input id="sig-date" name="signature_date" type="date" required>
+    </section>
+
+    <!-- ========= SUBMIT ========= -->
+    <p>
+      <button type="submit">Submit Intake</button>
+      <button type="reset">Clear Form</button>
+    </p>
+
+    <!-- Basic spam honeypot (ignored by humans) -->
+    <input type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true" hidden>
+  </form>
+</main>
+
+<footer>
+  <p>&copy; 2025 Tax Intake Demo. For educational use only.</p>
+</footer>
+
+</body>
+</html>
